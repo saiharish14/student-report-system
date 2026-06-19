@@ -1,0 +1,206 @@
+
+
+{% block content %}
+<style>
+    body {
+        background: linear-gradient(to bottom right, #fce4ec, #f8bbd0);
+    }
+
+    .form-container {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        max-width: 600px;
+        margin: auto;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #c2185b;
+        margin-bottom: 25px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 12px;
+        border: 2px solid #e1e5e9;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s ease;
+        background-color: #fafafa;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #007bff;
+        background-color: #ffffff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+
+    .form-group .errorlist {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 5px;
+        list-style: none;
+        padding: 0;
+    }
+
+    .form-group .errorlist li {
+        margin-bottom: 2px;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 25px;
+        justify-content: center;
+    }
+
+    button {
+        background-color: #007bff;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #0056b3;
+    }
+
+    .button-link {
+        display: inline-block;
+        background-color: #6c757d;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+    }
+
+    .button-link:hover {
+        background-color: #545b62;
+        color: white;
+        text-decoration: none;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const nameInput = document.querySelector('input[name="name"]');
+        
+        if (nameInput) {
+            nameInput.addEventListener('input', function(e) {
+                // Remove any numbers from the input
+                let value = e.target.value;
+                // Keep only letters, spaces, dots, hyphens, and apostrophes
+                value = value.replace(/[^a-zA-Z\s\.\-\']/g, '');
+                e.target.value = value;
+            });
+            
+            nameInput.addEventListener('keypress', function(e) {
+                // Prevent typing numbers and special characters
+                const char = String.fromCharCode(e.which);
+                if (!/[a-zA-Z\s\.\-\']/.test(char)) {
+                    e.preventDefault();
+                }
+            });
+        }
+    });
+</script>
+
+<div class="form-container">
+    <h2>{{ form.instance.pk|yesno:"Edit Student,Add Student" }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="{{ form.roll_number.id_for_label }}">Roll Number:</label>
+            {{ form.roll_number }}
+            {% if form.roll_number.errors %}
+                <ul class="errorlist">
+                    {% for error in form.roll_number.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Name:</label>
+            {{ form.name }}
+            {% if form.name.errors %}
+                <ul class="errorlist">
+                    {% for error in form.name.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.age.id_for_label }}">Age:</label>
+            {{ form.age }}
+            {% if form.age.errors %}
+                <ul class="errorlist">
+                    {% for error in form.age.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.student_class.id_for_label }}">Class:</label>
+            {{ form.student_class }}
+            {% if form.student_class.errors %}
+                <ul class="errorlist">
+                    {% for error in form.student_class.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.marks.id_for_label }}">Marks:</label>
+            {{ form.marks }}
+            {% if form.marks.errors %}
+                <ul class="errorlist">
+                    {% for error in form.marks.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit">Save</button>
+            <a class="button-link" href="{% url 'student_list' %}">Back to List</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
