@@ -1,206 +1,347 @@
 
-
-{% block content %}
-<style>
-    body {
-        background: linear-gradient(to bottom right, #fce4ec, #f8bbd0);
-    }
-
-    .form-container {
-        background-color: #ffffff;
-        padding: 30px;
-        border-radius: 10px;
-        max-width: 600px;
-        margin: auto;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    h2 {
-        text-align: center;
-        color: #c2185b;
-        margin-bottom: 25px;
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 20px;
-    }
-
-    .form-group label {
-        font-weight: 600;
-        color: #333;
-        margin-bottom: 8px;
-        font-size: 14px;
-    }
-
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        padding: 12px;
-        border: 2px solid #e1e5e9;
-        border-radius: 6px;
-        font-size: 14px;
-        transition: border-color 0.3s ease;
-        background-color: #fafafa;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
-        outline: none;
-        border-color: #007bff;
-        background-color: #ffffff;
-        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
-    }
-
-    .form-group .errorlist {
-        color: #dc3545;
-        font-size: 12px;
-        margin-top: 5px;
-        list-style: none;
-        padding: 0;
-    }
-
-    .form-group .errorlist li {
-        margin-bottom: 2px;
-    }
-
-    .form-actions {
-        display: flex;
-        gap: 15px;
-        margin-top: 25px;
-        justify-content: center;
-    }
-
-    button {
-        background-color: #007bff;
-        color: white;
-        padding: 12px 24px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
-        transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-        background-color: #0056b3;
-    }
-
-    .button-link {
-        display: inline-block;
-        background-color: #6c757d;
-        color: white;
-        padding: 12px 24px;
-        border-radius: 6px;
-        text-decoration: none;
-        font-size: 14px;
-        font-weight: 500;
-        transition: background-color 0.3s ease;
-    }
-
-    .button-link:hover {
-        background-color: #545b62;
-        color: white;
-        text-decoration: none;
-    }
-</style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const nameInput = document.querySelector('input[name="name"]');
-        
-        if (nameInput) {
-            nameInput.addEventListener('input', function(e) {
-                // Remove any numbers from the input
-                let value = e.target.value;
-                // Keep only letters, spaces, dots, hyphens, and apostrophes
-                value = value.replace(/[^a-zA-Z\s\.\-\']/g, '');
-                e.target.value = value;
-            });
-            
-            nameInput.addEventListener('keypress', function(e) {
-                // Prevent typing numbers and special characters
-                const char = String.fromCharCode(e.which);
-                if (!/[a-zA-Z\s\.\-\']/.test(char)) {
-                    e.preventDefault();
-                }
-            });
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Student</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --card-border: rgba(148, 163, 184, 0.18);
+            --shadow-lg: 0 24px 60px rgba(15, 23, 42, 0.12);
+            --shadow-md: 0 16px 32px rgba(15, 23, 42, 0.08);
         }
-    });
-</script>
 
-<div class="form-container">
-    <h2>{{ form.instance.pk|yesno:"Edit Student,Add Student" }}</h2>
-    <form method="post">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="{{ form.roll_number.id_for_label }}">Roll Number:</label>
-            {{ form.roll_number }}
-            {% if form.roll_number.errors %}
-                <ul class="errorlist">
-                    {% for error in form.roll_number.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 32px 18px 40px;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #eef2ff, #f8fafc);
+            color: var(--text-primary);
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: -1;
+            background:
+                radial-gradient(circle at 12% 18%, rgba(99, 102, 241, 0.14), transparent 28%),
+                radial-gradient(circle at 88% 12%, rgba(14, 165, 233, 0.14), transparent 24%),
+                radial-gradient(circle at 50% 100%, rgba(34, 197, 94, 0.08), transparent 30%);
+        }
+
+        .page-shell {
+            max-width: 760px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.65);
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            padding: 30px;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(2rem, 4vw, 3rem);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+        }
+
+        .hero p {
+            margin: 12px 0 0;
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid var(--card-border);
+            border-radius: 22px;
+            box-shadow: var(--shadow-md);
+            padding: 24px;
+        }
+
+        form {
+            margin: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1e293b;
+            letter-spacing: 0.01em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            min-height: 52px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(148, 163, 184, 0.32);
+            background: rgba(248, 250, 252, 0.95);
+            color: var(--text-primary);
+            font: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #3b82f6;
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.16);
+        }
+
+        .form-group input:hover,
+        .form-group select:hover,
+        .form-group textarea:hover {
+            border-color: rgba(99, 102, 241, 0.45);
+        }
+
+        .form-group .errorlist {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            color: #dc2626;
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+
+        .form-group:nth-child(5) {
+            grid-column: 1 / -1;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            margin-top: 22px;
+        }
+
+        button,
+        .button-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 52px;
+            padding: 0 20px;
+            border-radius: 999px;
+            border: 0;
+            font: inherit;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease, background 0.25s ease;
+            white-space: nowrap;
+        }
+
+        button:hover,
+        .button-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.14);
+            filter: saturate(1.03);
+        }
+
+        button {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #ffffff;
+        }
+
+        .button-link {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .button-link:hover {
+            color: #1e293b;
+        }
+
+        .field-span-2 {
+            grid-column: 1 / -1;
+        }
+
+        .footer {
+            max-width: 760px;
+            margin: 18px auto 0;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 720px) {
+            body {
+                padding: 16px 12px 28px;
+            }
+
+            .page-shell {
+                padding: 18px;
+                border-radius: 20px;
+            }
+
+            .form-card {
+                padding: 18px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group:nth-child(5),
+            .field-span-2 {
+                grid-column: auto;
+            }
+
+            .form-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            button,
+            .button-link {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const nameInput = document.querySelector('input[name="name"]');
+
+            if (nameInput) {
+                nameInput.addEventListener('input', function(e) {
+                    let value = e.target.value;
+                    value = value.replace(/[^a-zA-Z\s\.\-\']/g, '');
+                    e.target.value = value;
+                });
+
+                nameInput.addEventListener('keypress', function(e) {
+                    const char = String.fromCharCode(e.which);
+                    if (!/[a-zA-Z\s\.\-\']/.test(char)) {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="page-shell">
+        <div class="hero">
+            <h1>{{ form.instance.pk|yesno:"Edit Student,Add Student" }}</h1>
+            <p>Enter student information to create a new record.</p>
         </div>
 
-        <div class="form-group">
-            <label for="{{ form.name.id_for_label }}">Name:</label>
-            {{ form.name }}
-            {% if form.name.errors %}
-                <ul class="errorlist">
-                    {% for error in form.name.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
+        <div class="form-card">
+            <form method="post">
+                {% csrf_token %}
 
-        <div class="form-group">
-            <label for="{{ form.age.id_for_label }}">Age:</label>
-            {{ form.age }}
-            {% if form.age.errors %}
-                <ul class="errorlist">
-                    {% for error in form.age.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="{{ form.roll_number.id_for_label }}">Roll Number</label>
+                        {{ form.roll_number }}
+                        {% if form.roll_number.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.roll_number.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
 
-        <div class="form-group">
-            <label for="{{ form.student_class.id_for_label }}">Class:</label>
-            {{ form.student_class }}
-            {% if form.student_class.errors %}
-                <ul class="errorlist">
-                    {% for error in form.student_class.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
+                    <div class="form-group">
+                        <label for="{{ form.name.id_for_label }}">Name</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.name.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
 
-        <div class="form-group">
-            <label for="{{ form.marks.id_for_label }}">Marks:</label>
-            {{ form.marks }}
-            {% if form.marks.errors %}
-                <ul class="errorlist">
-                    {% for error in form.marks.errors %}
-                        <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
+                    <div class="form-group">
+                        <label for="{{ form.age.id_for_label }}">Age</label>
+                        {{ form.age }}
+                        {% if form.age.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.age.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
 
-        <div class="form-actions">
-            <button type="submit">Save</button>
-            <a class="button-link" href="{% url 'student_list' %}">Back to List</a>
+                    <div class="form-group">
+                        <label for="{{ form.student_class.id_for_label }}">Class</label>
+                        {{ form.student_class }}
+                        {% if form.student_class.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.student_class.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group field-span-2">
+                        <label for="{{ form.marks.id_for_label }}">Marks</label>
+                        {{ form.marks }}
+                        {% if form.marks.errors %}
+                            <ul class="errorlist">
+                                {% for error in form.marks.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit">Save</button>
+                    <a class="button-link" href="{% url 'student_list' %}">Back to List</a>
+                </div>
+            </form>
         </div>
-    </form>
-</div>
-{% endblock %}
+    </div>
+
+    <div class="footer">Student Report System • Built with Django</div>
+</body>
+</html>

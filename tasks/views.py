@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Avg, Max, Count
 from .models import Student
 from .forms import StudentForm
 from rest_framework.permissions import IsAuthenticated
@@ -7,7 +8,21 @@ from rest_framework.views import APIView
 
 def student_list(request):
     students = Student.objects.all()
-    return render(request, 'tasks/student_list.html', {'students': students})
+    dashboard_stats = students.aggregate(
+        total_students=Count('id'),
+        highest_marks=Max('marks'),
+        average_marks=Avg('marks'),
+    )
+    return render(
+        request,
+        'tasks/student_list.html',
+        {
+            'students': students,
+            'total_students': dashboard_stats['total_students'] or 0,
+            'highest_marks': dashboard_stats['highest_marks'] or 0,
+            'average_marks': dashboard_stats['average_marks'] or 0,
+        },
+    )
 
 def add_student(request):
     if request.method == 'POST':
